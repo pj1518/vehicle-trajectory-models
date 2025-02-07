@@ -1,12 +1,10 @@
-# main_bicycle.py
-
 import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from utils.data_preprocessing import load_and_filter_data
 from utils.metrics import average_displacement_error, final_displacement_error
-from models.combined_models import BicycleModel, bicycle_model
+from models.combined_models import bicycle_model
 import os
 
 start_time = time.time()
@@ -19,9 +17,6 @@ start_row = 0
 dt = (skip_width + 1)/25
 
 data = load_and_filter_data(recording_id, skip_width=skip_width)
-
-if not os.path.exists('results'):
-    os.makedirs('results')
 
 data['wheelbase'] = data['length'] * 0.90
 headings = data['heading']
@@ -82,7 +77,9 @@ output_data = pd.DataFrame({
     })
 
 # Save predictions to CSV
-output_csv_path = 'bicycle_predictions.csv'
+if not os.path.exists('results'):
+    os.makedirs('results')
+output_csv_path = r'results\bicycle_predictions.csv'
 output_data = output_data.round(3)
 output_data.to_csv(output_csv_path, index=False)#, sep=';')
 print(output_data.head())
@@ -119,5 +116,5 @@ plt.xlabel('Time')
 plt.ylabel('Error in location prediction [m]')
 plt.title('Bicycle Model Prediction Error')
 plt.tight_layout()
-plt.savefig('Bicycle.png', dpi=300, bbox_inches='tight', format='png')
+plt.savefig(r'results\Bicycle Deviations.png', dpi=300, bbox_inches='tight', format='png')
 plt.show()

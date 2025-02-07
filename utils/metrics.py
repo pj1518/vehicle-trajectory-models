@@ -1,8 +1,5 @@
 import numpy as np
 
-def euclidean_distance(x1, y1, x2, y2):
-    return np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-
 def average_displacement_error(df):
     displacement_errors = np.sqrt((df['xCenter_pred'] - df['xCenter_gt'])**2 +
                                   (df['yCenter_pred'] - df['yCenter_gt'])**2)

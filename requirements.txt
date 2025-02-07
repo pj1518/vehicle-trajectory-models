@@ -1,4 +1,10 @@
-pandas
 numpy
+pandas
 matplotlib
- 
+tqdm
+scikit-learn
+torch
+torchvision
+torchaudio
+pytorch-lightning
+openpyxl

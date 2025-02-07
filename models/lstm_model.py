@@ -23,9 +23,9 @@ class LSTMModel(pl.LightningModule):
     def __init__(self, num_input_frames, num_input_features, num_output_frames, num_output_features):
         super().__init__()
         self.lstm = nn.LSTM(input_size=num_input_features, hidden_size=32, batch_first=True)
-        self.fc1 = nn.Linear(32, 128)
-        self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, num_output_frames * num_output_features)
+        self.fc1 = nn.Linear(32, 64)
+        self.fc2 = nn.Linear(64, 32)
+        self.fc3 = nn.Linear(32, num_output_frames * num_output_features)
         self.relu = nn.ReLU()
         self.loss_fn = nn.MSELoss()
         self.train_losses_per_epoch = []
@@ -34,6 +34,8 @@ class LSTMModel(pl.LightningModule):
         # Metric storage
         self.test_ade = []
         self.test_fde = []
+        self.test_predictions = []
+        self.test_targets = []
 
     def forward(self, x):
         lstm_out, _ = self.lstm(x)
@@ -113,6 +115,7 @@ class LSTMModel(pl.LightningModule):
         plt.ylabel('Loss')
         plt.legend()
         plt.title('Training and Validation Loss per Epoch')
+        plt.savefig(r'results\\Losses.png', dpi=300, bbox_inches='tight', format='png')
         plt.show()
 
 

@@ -20,12 +20,6 @@ filtered_data = load_and_filter_data(recording_id, skip_width=0)
 if not os.path.exists('results'):
     os.makedirs('results')
 
-# Initialize the model
-#acceleration_model = ConstantAcceleration(future_sequence_length=future_sequence_length)
-
-# Assuming you have already pre-processed your data and it's in a DataFrame (e.g., 'data')
-x = filtered_data  
-
 # Use the model to predict the future positions
 predictions = acc_model(x=filtered_data, skip_width=skip_width, future_sequence_length=future_sequence_length)
 
@@ -38,8 +32,15 @@ predictions_df['yCenter_gt'] = filtered_data['yCenter'].values[:future_sequence_
 # Save predictions to CSV
 predictions_df.to_csv('results/acceleration_predictions.csv', index=False)
 
+# Calculate Average Displacement Error
 avg_disp_error = average_displacement_error(predictions_df)
 print(f"Average Displacement Error (for each point): {avg_disp_error.mean()}")
+
+average_distance_errors = []
+for t in range(future_sequence_length):
+    subset_distance = avg_disp_error[:t + 1]
+    average_error = np.mean(subset_distance)
+    average_distance_errors.append(average_error)
 
 # Calculate Final Displacement Error
 final_disp_error = final_displacement_error(predictions_df)
@@ -49,13 +50,13 @@ time_range = np.linspace(1/25, future_sequence_length/25, num=future_sequence_le
 
 plt.figure(figsize=(10, 6))
 plt.plot(time_range, avg_disp_error, marker='o', linestyle='-', label='Average Distance Error')
-#plt.plot(time_range, final_disp_error, marker='x', linestyle='-', label='Deviated Distance')
+plt.plot(time_range, average_distance_errors, marker='x', linestyle='-', label='Deviated Distance')
 plt.xlabel('Time [seconds]')
 plt.ylabel('Deviation in Distance [m]')
 plt.title('Distance deviation and ADE vs Time')
 plt.grid(True)
 plt.legend()
-
+plt.savefig(r'results\Acceleration Deviations.png', dpi=300, bbox_inches='tight', format='png')
 plt.show()
 
 elapsed_time = time.time() - start_time
